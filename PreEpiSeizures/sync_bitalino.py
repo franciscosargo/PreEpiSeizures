@@ -1,5 +1,5 @@
-def syncbitalino(value,device):
-
+def sync_bitalino(value,device):
+	print ('')
 	print ('Sychronizing...'),
 
 	if value == 0:

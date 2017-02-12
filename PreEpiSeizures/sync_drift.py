@@ -1,4 +1,7 @@
-def sync_drift(t, count_a, count_b)
+
+from find_sync import *
+
+def sync_drift(t, count_a, count_b):
 	a_I1 = t[0:,2]
 	b_I1 = t[0:,12]
 	count_a_t = find_sync(a_I1)
@@ -8,11 +11,12 @@ def sync_drift(t, count_a, count_b)
 		flag_sync = 1
 		count_a = count_a + count_a_t
 		count_b = count_b + count_b_t
+		raise Exception("the Connection between the Modules has been severed")
 	else:
 		flag_sync = 0
 		count_a = count_a + count_a_t
 		count_b = count_b + count_b_t
-		diff = count_a - count_b
 
+	diff = count_b - count_a
 	return diff, count_a, count_b
 	

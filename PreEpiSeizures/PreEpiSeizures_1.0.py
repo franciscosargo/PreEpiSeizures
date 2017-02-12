@@ -1,10 +1,8 @@
 from bitalino import *
 from connect import *
 from header2bitalino import*
-from syncbitalino import *
-from resetsyncbitalino import *
-from find_sync import *
-from sync_log import *
+from sync_bitalino import *
+from sync_drift import *
 
 
 import time
@@ -49,10 +47,11 @@ device_B = connect(macAddress_B)
 # Prepare the the files for saving data =======================================
 
 
-a_file=open(directory + 'A_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
+# Open a new file
+save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+a_file=open(directory + 'A_'+ save_time+'.txt', 'w')
 header2bitalino(a_file)
-
-drift_log_file = open(directory + 'drift_log_file_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
+drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
 
 #b_file=open('B_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
 
@@ -96,8 +95,7 @@ while True:
 		if c == 1 or time.time()-strtime> 15:
 
 			# Trigger the digital output
-			dig_Out = syncbitalino(dig_Out, device_A)
-			
+			dig_Out = sync_bitalino(dig_Out, device_A)
 			strtime =  time.time()
 			flag_sync = 1
 			count_a = 0
@@ -111,10 +109,10 @@ while True:
 
 		if flag_sync == 1:
 			drift, count_a, count_b = sync_drift(t, count_a, count_b)
+			print drift
+			flag_sync = 0
 
 				
-
-
 
 		# update the counter
 		c = c+1	
@@ -133,9 +131,8 @@ while True:
 		if time.time()-inittime> 60*60:
 			a_file.close()
 
-			save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-			
 			# Open a new file
+			save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 			a_file = open(directory + save_time +'.txt', 'w')
 			header2bitalino(a_file)
 
@@ -178,7 +175,7 @@ while True:
 		save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 		a_file=open(directory + 'A_'+ save_time+'.txt', 'w')
 		header2bitalino(a_file)
-		drift_log_file = open(directory + 'drift_log_file_'+ save_time, gmtime())+'.txt', 'w')
+		drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
 
 
 		# Setting initial digital output settings
@@ -186,8 +183,8 @@ while True:
 		device_A.trigger([dig_Out,dig_Out]);
 
 		# Restarting the acqusition
-		device_A.start(samplingRate_A, acqChannels_A)
 		device_B.start(samplingRate_B, acqChannels_B)
+		device_A.start(samplingRate_A, acqChannels_A)
 
 		print ('')
 		print ('The system is running again ...'),
