@@ -8,7 +8,7 @@ def connect(macAddress):
 	else:
 		mod = 'B'
 
-	print('Searching for Module'+ str(mod) +' ....')
+	print('Searching for Module '+ str(mod) +' ....')
 	
 	while True:
 

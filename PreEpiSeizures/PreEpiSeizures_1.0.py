@@ -1,13 +1,14 @@
 from bitalino import *
 from connect_system import *
+from disconnect_system import *
 from header2bitalino import*
 from sync_bitalino import *
 from sync_drift import *
 from write_drift_log import *
 from write_acq_file import *
 from create_folder import * 
+from open_file import * 
 
-import time
 import sys
 
 #************************************* MAIN SCRIPT*************************************************************
@@ -26,23 +27,7 @@ device_A, device_B = connect_system()
 
 
 # Open a new file
-save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-a_file=open(directory + 'A_'+ save_time+'.txt', 'w')
-header2bitalino(a_file)
-drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
-
-#b_file=open('B_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
-
-#a_file.write('# OpenSignals Text File Format'+'\n')
-#a_file.write('# {"20:16:04:12:01:40": {"sensor": ["RAW", "RAW", "RAW", "RAW", "RAW", "RAW"], "device name": "A", "column": ["nSeq", "I1", "I2", "O1", "O2", "A1", "A2", "A3", "A4", "A5", "A6"], "sync interval": 2, "time": "19:49:30.350", "comments": "", "device connection": "20:16:04:12:01:40", "channels": [1, 2, 3, 4, 5, 6], "date": "2017-1-31", "mode": 0, "digital IO": [0, 0, 0, 0, 1, 1, 1, 1], "firmware version": "5.1", "device": "bitalino_rev", "position": 0, "sampling rate": 1000, "label": ["A1", "A2", "A3", "A4", "A5", "A6"], "resolution": [4, 1, 1, 1, 1, 10, 10, 10, 10, 6, 6], "special": [{}, {}, {}, {}, {}, {}]}}' +'\n')
-#a_file.write('# EndOfHeader'+'\n')
-
-
-#b_file=open(directory + 'B_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
-
-#b_file.write('# OpenSignals Text File Format'+'\n')
-#b_file.write('# {"20:16:04:12:01:40": {"sensor": ["RAW", "RAW", "RAW", "RAW", "RAW", "RAW"], "device name": "B", "column": ["nSeq", "I1", "I2", "O1", "O2", "A1", "A2", "A3", "A4", "A5", "A6"], "sync interval": 2, "time": "19:49:30.350", "comments": "", "device connection": "20:16:04:12:01:40", "channels": [1, 2, 3, 4, 5, 6], "date": "2017-1-31", "mode": 0, "digital IO": [0, 0, 0, 0, 1, 1, 1, 1], "firmware version": "5.1", "device": "bitalino_rev", "position": 0, "sampling rate": 1000, "label": ["A1", "A2", "A3", "A4", "A5", "A6"], "resolution": [4, 1, 1, 1, 1, 10, 10, 10, 10, 6, 6], "special": [{}, {}, {}, {}, {}, {}]}}' +'\n')
-#b_file.write('# EndOfHeader'+'\n')
+a_file, drift_log_file = open_file(directory)
 
 # ==========================================================================================
 
@@ -108,12 +93,11 @@ while True:
 
 		# Open new file each hour
 		if time.time()-inittime> 60*60:
+			# close the file
 			a_file.close()
 
 			# Open a new file
-			save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-			a_file = open(directory + save_time +'.txt', 'w')
-			header2bitalino(a_file)
+			a_file, drift_log_file = open_file(directory)
 
 	# -------------------------------------------------------------------------------------------------------------------------------
 
@@ -124,46 +108,25 @@ while True:
 		print ('The system has stopped running because ' + str(e) + '! Please check both Modules!')
 		print ('Trying to Reconnect....')
 
-		# Close connection from A
-		try:
-			device_A.stop()
-			device_A.close()
+		# Disconnect the system
+		disconnect_system(device_A, device_B, a_file)
 
-		except Exception:
-			c=c
-
-		# Close connection from B
-		try:
-			device_B.stop()
-			device_B.close()
-
-		except Exception:
-			c=c
-
-		#Close and save files
+		# Close the file
 		a_file.close()
-		#b_file.close()
 
-		# Reconnect module A
-		device_A = connect(macAddress_A)
-
-		# Reconnect module B
-		device_B = connect(macAddress_B)
+		# Reconnect the devices
+		device_A, device_B = connect_system()
 
 		# Open a new file
-		save_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-		a_file=open(directory + 'A_'+ save_time+'.txt', 'w')
-		header2bitalino(a_file)
-		drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
-
+		a_file, drift_log_file = open_file(directory)
 
 		# Setting initial digital output settings
 		dig_Out = 0
 		device_A.trigger([dig_Out,dig_Out]);
 
 		# Restarting the acqusition
-		device_B.start(samplingRate_B, acqChannels_B)
-		device_A.start(samplingRate_A, acqChannels_A)
+		device_B.start()
+		device_A.start()
 
 		strtime = time.time()
 		c = 1
