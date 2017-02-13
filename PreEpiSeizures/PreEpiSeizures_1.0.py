@@ -3,18 +3,19 @@ from connect import *
 from header2bitalino import*
 from sync_bitalino import *
 from sync_drift import *
-
+from write_drift_log import *
+from write_acq_file import *
+from create_folder import * 
 
 import time
-import os
 import sys
 
-# Use/create the patient folder ================================================= 
-nb = input('Type in the patients number : ')
+#************************************* MAIN SCRIPT*************************************************************
 
-directory = "/home/sargo/Desktop/TESE 2017/Acq_PreEpiSeizures/"+str(nb) + "/"
-if not os.path.exists(directory):
-    os.makedirs(directory)
+# Use/create the patient folder ================================================= 
+directory = create_folder()
+
+
 
 # Prepare the device A ==========================================================
 
@@ -95,6 +96,7 @@ while True:
 		if c == 1 or time.time()-strtime> 15:
 
 			# Trigger the digital output
+			sync_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 			dig_Out = sync_bitalino(dig_Out, device_A)
 			strtime =  time.time()
 			flag_sync = 1
@@ -109,11 +111,10 @@ while True:
 
 		if flag_sync == 1:
 			drift, count_a, count_b = sync_drift(t, count_a, count_b)
-			print drift
 			flag_sync = 0
+			write_drift_log(drift_log_file, drift, sync_time)
 
 				
-
 		# update the counter
 		c = c+1	
 
@@ -124,7 +125,8 @@ while True:
 		sys.stdout.write("\rElapsed time (seconds): % i " % i)
 		sys.stdout.flush()
 
-		np.savetxt(a_file, t, fmt='%.0f', delimiter='	', newline='\n', header='', footer='', comments ='')
+
+		write_acq_file(a_file,t)
 		#np.savetxt(b_file, b, fmt='%.0f', delimiter='	', newline='\n', header='', footer='', comments ='')
 
 		# Open new file each hour
@@ -186,6 +188,8 @@ while True:
 		device_B.start(samplingRate_B, acqChannels_B)
 		device_A.start(samplingRate_A, acqChannels_A)
 
+		strtime = time.time()
+		c = 1
 		print ('')
 		print ('The system is running again ...'),
 		
