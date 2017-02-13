@@ -8,6 +8,8 @@ from write_drift_log import *
 from write_acq_file import *
 from create_folder import * 
 from open_file import * 
+from start_system import *
+from read_system import * 
 
 import sys
 
@@ -25,7 +27,6 @@ device_A, device_B = connect_system()
 
 # Prepare the the files for saving data =======================================
 
-
 # Open a new file
 a_file, drift_log_file = open_file(directory)
 
@@ -33,11 +34,7 @@ a_file, drift_log_file = open_file(directory)
 
 
 # Acquisition LOOP =========================================================================
-
-dig_Out = 0
-device_A.trigger([dig_Out,dig_Out]);
-device_B.start()
-device_A.start()
+dig_Out = start_system(device_A, device_B)
 
 print('')
 print('The system is running ...'),
@@ -58,23 +55,17 @@ while True:
 		if c == 1 or time.time()-strtime> 15:
 
 			# Trigger the digital output
-			sync_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-			dig_Out = sync_bitalino(dig_Out, device_A)
-			strtime =  time.time()
+			dig_Out, sync_time = sync_bitalino(dig_Out, device_A)
 			flag_sync = 1
-			count_a = 0
-			count_b = 0
+			strtime = time.time()
 
 
-		a = device_A.read(1000)
-		b = device_B.read(1000)
-
-		t = np.concatenate((a, b), axis=1)
+		t = read_system(device_A, device_B)
 
 		if flag_sync == 1:
-			drift, count_a, count_b = sync_drift(t, count_a, count_b)
-			flag_sync = 0
+			drift = sync_drift(t)
 			write_drift_log(drift_log_file, drift, sync_time)
+			flag_sync = 0
 
 				
 		# update the counter
@@ -119,14 +110,9 @@ while True:
 
 		# Open a new file
 		a_file, drift_log_file = open_file(directory)
-
-		# Setting initial digital output settings
-		dig_Out = 0
-		device_A.trigger([dig_Out,dig_Out]);
-
-		# Restarting the acqusition
-		device_B.start()
-		device_A.start()
+		
+		# Restart the system
+		dig_Out = start_system(device_A, device_B)
 
 		strtime = time.time()
 		c = 1
