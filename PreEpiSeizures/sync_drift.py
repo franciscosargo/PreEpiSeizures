@@ -13,7 +13,7 @@ def sync_drift(t):
 	if count_a_t == 1000 or count_b_t == 1000:
 		count_a = count_a_t
 		count_b = count_b_t
-		raise Exception("the Connection between the Modules has been severed")
+		raise Exception("the Connection between the Modules has been severed") 
 	else:
 		count_a = count_a_t
 		count_b = count_b_t

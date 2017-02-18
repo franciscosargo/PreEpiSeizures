@@ -1,4 +1,5 @@
-def disconnect_system(device_A, device_B, a_file): 
+from close_file import * 
+def disconnect_system(device_A, device_B, a_file, drift_log_file): 
 
 	# Close connection from A
 	try:
@@ -16,4 +17,4 @@ def disconnect_system(device_A, device_B, a_file):
 	except Exception:
 		pass
 
-		
+	close_file(a_file, drift_log_file)

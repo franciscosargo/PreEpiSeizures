@@ -1,10 +1,9 @@
-import time
+
 
 def sync_bitalino(value,device):
 	#print ('')
 	#print ('Sychronizing...'),
 
-	sync_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 
 	if value == 0:
 		value = 1
@@ -19,4 +18,4 @@ def sync_bitalino(value,device):
 	print ('Done!')
 
 			
-	return value, sync_time
+	return value

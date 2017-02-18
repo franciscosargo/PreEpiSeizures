@@ -1,6 +1,7 @@
 from connect import *
+from open_file import *
 
-def connect_system():
+def connect_system(directory):
 	# Prepare the device A ==========================================================
 
 	macAddress_A= "20:16:04:12:01:23"
@@ -29,5 +30,7 @@ def connect_system():
 
 	# =============================================================================
 
+	a_file, drift_log_file = open_file(directory)
 
-	return device_A, device_B
+
+	return device_A, device_B, a_file, drift_log_file
