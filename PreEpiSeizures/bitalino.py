@@ -56,6 +56,7 @@ class ExceptionCode():
     INVALID_PARAMETER = "Invalid parameter."
     INVALID_VERSION = "Only available for Bitalino 2.0."
     IMPORT_FAILED = "Please connect using the Virtual COM Port or confirm that PyBluez is installed; bluetooth wrapper failed to import with error: "
+    SYNC_FAILED = "The Modules are not Connected."
 
 class BITalino(object):
     """

@@ -3,19 +3,18 @@ from connect_system import *
 from disconnect_system import *
 from create_folder import * 
 from start_system import *
-from read_system import * 
 from write_file import * 
 from run_system import *
+from system_except import * 
 
 import sys
 
 #************************************* MAIN SCRIPT*************************************************************
 
-# Use/create the patient folder ================================================= 
+# Use/create the patient folder =============================================================== 
 directory = create_folder()
 
-
-# Prepare the device A ==========================================================
+# Prepare the device A ====================================================================
 
 device_A, device_B, a_file, drift_log_file = connect_system(directory)
 
@@ -28,7 +27,7 @@ sync_param = start_system(device_A, device_B, a_file, drift_log_file)
 print('')
 print('The system is running ...'),
 
-# sync_param
+	
 
 
 
@@ -37,7 +36,7 @@ while True:
 
 	# try to read from the device--------------------------------------------------------------------------------------------------
 	try:
-		sync_param = run_system(device_A, device_B, sync_param, directory)
+		sync_param = run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory)
 
 	# -------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,7 +61,6 @@ while True:
 		print ('The system is running again ...'),
 		
 	# -----------------------------------------------------------------------------------------------------------------------------------------
-
 
 	#Handle user interruption -----------------------------------------------------------------------------------------------------------------
 	except KeyboardInterrupt:

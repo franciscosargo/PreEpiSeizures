@@ -15,7 +15,6 @@ def sync_bitalino(value,device):
 		device.trigger([0,0]);
 		#print (str(value))
 
-	print ('Done!')
 
 			
 	return value
