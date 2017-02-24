@@ -4,7 +4,7 @@ def create_folder():
 
 
 	nb = input('Type in the patients number : ')
-	directory = "/home/sargo/Acq_PreEpiSeizures_new/"+str(nb) + "/"
+	directory = 'c:/Users/PreEpiSeizures/Desktop/Patient'+str(nb)+'/'
 	#directory = "/home/sargo/Desktop/TESE 2017/Acq_PreEpiSeizures/"+str(nb) + "/"
 	
 	if not os.path.exists(directory):

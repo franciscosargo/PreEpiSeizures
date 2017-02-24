@@ -1,4 +1,5 @@
 from close_file import * 
+from bitalino import * 
 def disconnect_system(device_A, device_B, a_file, drift_log_file): 
 
 	# Close connection from A
@@ -13,7 +14,7 @@ def disconnect_system(device_A, device_B, a_file, drift_log_file):
 	try:
 		device_B.stop()
 		device_B.close()
-
+                      
 	except Exception:
 		pass
 

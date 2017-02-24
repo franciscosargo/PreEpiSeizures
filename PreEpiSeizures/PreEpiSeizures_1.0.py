@@ -16,13 +16,23 @@ directory = create_folder()
 
 # Prepare the device A ====================================================================
 
-device_A, device_B, a_file, drift_log_file = connect_system(directory)
+try:
+        device_A, device_B, a_file, drift_log_file = connect_system(directory)
+        
+except Exception as e:
+        print(e)
+        pass
 
 
 # Acquisition LOOP =========================================================================
-sync_param = start_system(device_A, device_B, a_file, drift_log_file)
+try:
+        sync_param = start_system(device_A, device_B, a_file, drift_log_file)
+        
+except Exception as e:
+        print(e)
+        pass
 
-#print sync_param['strtime']
+                
 
 print('')
 print('The system is running ...'),
@@ -36,7 +46,7 @@ while True:
 
 	# try to read from the device--------------------------------------------------------------------------------------------------
 	try:
-		sync_param = run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory)
+		a_file, drift_log_file, sync_param = run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory)
 
 	# -------------------------------------------------------------------------------------------------------------------------------
 
@@ -51,10 +61,17 @@ while True:
 		disconnect_system(device_A, device_B, a_file, drift_log_file)
 
 		# Reconnect the devices
-		device_A, device_B, a_file, drift_log_file = connect_system(directory)
+                try:
+                        device_A, device_B, a_file, drift_log_file = connect_system(directory)
+                except Exception:
+                        pass
 
-		# Restart the system
-		sync_param = start_system(device_A, device_B, a_file, drift_log_file)
+
+                # Acquisition LOOP =========================================================================
+                try:
+                        sync_param = start_system(device_A, device_B, a_file, drift_log_file)
+                except Exception:
+                         pass
 
 
 		print ('')

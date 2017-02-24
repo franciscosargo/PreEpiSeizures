@@ -83,7 +83,7 @@ class BITalino(object):
     X                Wait X seconds for a response and raises a connection Exception
     ===============  ================================================================
     """
-    def __init__(self, macAddress, timeout = None):
+    def __init__(self, macAddress, timeout = 45):
         regCompiled = re.compile('^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$');
         checkMatch = re.match(regCompiled, macAddress);
         self.blocking = True if timeout == None else False

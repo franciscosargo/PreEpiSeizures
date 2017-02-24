@@ -1,14 +1,25 @@
 import time
+from datetime import datetime, timedelta
 from header2bitalino import *  
 
 def open_file(directory):
 
 	# for txt format
-	save_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-	a_file=open(directory + 'A_'+ save_time+'.txt', 'w')
-	header2bitalino(a_file)
-	drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
+	save_time = time.strftime("%Y-%m-%d %H-%M-%S", time.gmtime())
+	now = datetime.now()
+	file_time = now.strftime("%Y-%m-%d %H:%M:%S.%f").rstrip('0')
+	file_time = file_time[11:]
+	file_time = '"'+file_time +'"'
+	
+	name = directory + 'A_'+ save_time+'.txt'
+	print directory
+	print name
 
+	file_date = '"'+ save_time[0:10] + '"'
+	
+	a_file=open(directory+ 'A'+ save_time+ '.txt', 'w')
+	header2bitalino(a_file, file_time, file_date)
+	drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
 	#b_file=open('B_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
 
 	#a_file.write('# OpenSignals Text File Format'+'\n')
