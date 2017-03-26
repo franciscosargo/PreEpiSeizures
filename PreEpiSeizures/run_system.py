@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 
 import time
 import sys
+import socket
+
 
 def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory):
 	
@@ -18,15 +20,29 @@ def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory
 		sync_param['flag_sync'] = 1
 		sync_param['strtime'] = time.time()
 		now = datetime.now()
-                sync_time = now.strftime("%Y-%m-%d %H:%M:%S.%f").rstrip('0')
+		sync_time = now.strftime("%Y-%m-%d %H:%M:%S.%f").rstrip('0')
 		sync_param['sync_time'] = sync_time
 		sync_param['connection'] = 1
 
-	t = read_2_modules(device_A, device_B)
+	t, t_str = read_2_modules(device_A, device_B)
+	MESSAGE = t_str
+	UDP_IP = "127.0.0.1"
+	UDP_PORT = 5005
+
+	#print 
+	#print len(t_str)
+	try:
+		sock = socket.socket(socket.AF_INET, # Internet
+	                     	socket.SOCK_DGRAM) # UDP
+		sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+	except Exception as e:
+		print e
+		pass
 
 
 	if sync_param['flag_sync'] == 1:
 		sync_param['diff'], sync_param['count_a'] = sync_drift(t)
+		print sync_param['count_a']
 		sync_param['save_log'] = 1
 		sync_param['flag_sync'] = 0
 
@@ -40,8 +56,8 @@ def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory
 	sys.stdout.write("\rElapsed time (seconds): % i " % i)
 	sys.stdout.flush()
 
-	write_file(t, a_file, drift_log_file, sync_param)
-	#np.savetxt(b_file, b, fmt='%.0f', delimiter='	', newline='\n', header='', footer='', comments ='')
+	write_file(t, a_file, drift_log_file, sync_param, str(i))
+	#np.savetxt(b_file, b, fmt='%.0f', delimiter='	', line='\n', header='', footer='', comments ='')
 
 	# Open new file each hour
 	if sync_param['close_file'] == 1:

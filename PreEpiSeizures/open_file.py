@@ -1,6 +1,7 @@
 import time
 from datetime import datetime, timedelta
 from header2bitalino import *  
+import h5py
 
 def open_file(directory):
 
@@ -17,9 +18,16 @@ def open_file(directory):
 
 	file_date = '"'+ save_time[0:10] + '"'
 	
-	a_file=open(directory+ 'A'+ save_time+ '.txt', 'w')
-	header2bitalino(a_file, file_time, file_date)
+	#Uncomment for txt
+	#a_file=open(directory+ 'A'+ save_time+ '.txt', 'w')
+	#header2bitalino(a_file, file_time, file_date)
+
+	# Uncomment for hdf5
+	a_file = h5py.File(directory + 'A' + save_time + '.h5', 'a')
+
 	drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
+
+
 	#b_file=open('B_'+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+'.txt', 'w')
 
 	#a_file.write('# OpenSignals Text File Format'+'\n')
