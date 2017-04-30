@@ -19,11 +19,11 @@ def open_file(directory):
 	file_date = '"'+ save_time[0:10] + '"'
 	
 	#Uncomment for txt
-	#a_file=open(directory+ 'A'+ save_time+ '.txt', 'w')
-	#header2bitalino(a_file, file_time, file_date)
+	a_file=open(directory+ 'A'+ save_time+ '.txt', 'w')
+	header2bitalino(a_file, file_time, file_date)
 
 	# Uncomment for hdf5
-	a_file = h5py.File(directory + 'A' + save_time + '.h5', 'a')
+	#a_file = h5py.File(directory + 'A' + save_time + '.h5', 'a')
 
 	drift_log_file = open(directory + 'drift_log_file_'+ save_time +'.txt', 'w')
 

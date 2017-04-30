@@ -14,6 +14,8 @@ def find_sync(array):
 	else:
 		count = indexes[0]
 
+	
+
 	return count
 
 

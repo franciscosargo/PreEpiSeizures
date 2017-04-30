@@ -27,22 +27,22 @@ win.setWindowTitle('pyqtgraph example: Plotting')
 pg.setConfigOptions(antialias=True)
 
 # Initialize the data
-data = np.zeros(12*10000)
-data = data.reshape(10000,12)
+data = np.zeros(14*10000)
+data = data.reshape(10000,14)
 
 # Initialize the plots
 dvA_plots = []
 dvB_plots = []
 
 # Set the name of the channels of Module A
-dvA_names = ["EDA", "BVP", "EMG", "Acc X", "Acc Y", "Acc Z"]
+dvA_names = ["EDA", "BVP", "EMG", "Acc X", "Acc Y", "Acc Z", 'DIG']
 
 # Set the name of the channels of Module B
-dvB_names = ["EOG", "ECG", "PZT", "Acc X", "Acc Y", "Acc Z"]
+dvB_names = ["EOG", "ECG", "PZT", "Acc X", "Acc Y", "Acc Z", 'DIG']
 
 
 # Set tthe curves for the plots
-for i in range(0,6):
+for i in range(0,7):
     p = win.addPlot(title = dvA_names[i])
     p.setYRange(0, 100)
     curve = p.plot(pen='y')
@@ -78,8 +78,9 @@ def update():
 
     for i in range(6,12):
         dvB_plots[i-6].setData(data[:,i])
-  
-
+    
+    dvA_plots[6].setData(data[:,12])
+    dvB_plots[6].setData(data[:,13])
 
 
 print 'HELLLO'

@@ -1,6 +1,7 @@
 from connect import *
 from open_file import *
 
+
 def connect_system(directory):
 	# Prepare the device A ==========================================================
 
@@ -12,7 +13,8 @@ def connect_system(directory):
 	digitalOutput_A= [0,0]
 
 	# Connect to BITalino
-	device_A = connect(macAddress_A)
+	init_connect_A_time = time.time() 
+	device_A = connect(macAddress_A,init_connect_A_time)
 
 	# ==============================================================================
 
@@ -26,7 +28,8 @@ def connect_system(directory):
 	digitalOutput_B = [0,0]
 
 	# Connect to BITalino
-	device_B = connect(macAddress_B)
+	init_connect_B_time = time.time()
+	device_B = connect(macAddress_B,init_connect_B_time)
 
 	# =============================================================================
 

@@ -15,6 +15,12 @@ def refresh(data, data_socket):
 
 
 
+	data[:-100,12] = data[100:,12]
+	data[-100:,12] = data_socket[:,4].ravel()
+
+	data[:-100,13] = data[100:,13]
+	data[-100:,13] = data_socket[:,12].ravel()
+
 	return data 	
 
 

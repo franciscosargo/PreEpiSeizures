@@ -17,12 +17,14 @@ def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory
 
 	if time.time()-sync_param['strtime'] > 5:
 		sync_param['dig_Out'] = sync_bitalino(sync_param['dig_Out'], device_A)
-		sync_param['flag_sync'] = 1
 		sync_param['strtime'] = time.time()
 		now = datetime.now()
 		sync_time = now.strftime("%Y-%m-%d %H:%M:%S.%f").rstrip('0')
 		sync_param['sync_time'] = sync_time
 		sync_param['connection'] = 1
+		sync_param['sync_append'] = 0
+		sync_param['sync_arr_A'] = np.zeros(1000, dtype = float)
+		sync_param['sync_arr_B'] = np.zeros(1000, dtype = float)
 
 	t, t_str = read_2_modules(device_A, device_B)
 	MESSAGE = t_str
@@ -39,12 +41,18 @@ def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory
 		print e
 		pass
 
+	if sync_param['sync_append'] > -1:
+		c = sync_param['sync_append'] 
+		sync_param['sync_arr_A'][((c*100)):((c+1)*100)] =  t[0:,4]
+		sync_param['sync_arr_B'][((c*100)):((c+1)*100)] =  t[0:,12]
+		sync_param['sync_append'] += 1
 
-	if sync_param['flag_sync'] == 1:
-		sync_param['diff'], sync_param['count_a'] = sync_drift(t)
-		print sync_param['count_a']
+
+	if  sync_param['sync_append'] == 10:
+		sync_param['diff'], sync_param['count_a'] = sync_drift(sync_param['sync_arr_A'], sync_param['sync_arr_B'])
+		#print sync_param['diff']
 		sync_param['save_log'] = 1
-		sync_param['flag_sync'] = 0
+		sync_param['sync_append'] = -1
 
 	# Open new file each hour
 	if time.time()-sync_param['inittime']> 60*60:
@@ -57,7 +65,6 @@ def run_system(device_A, device_B, a_file, drift_log_file, sync_param, directory
 	sys.stdout.flush()
 
 	write_file(t, a_file, drift_log_file, sync_param, str(i))
-	#np.savetxt(b_file, b, fmt='%.0f', delimiter='	', line='\n', header='', footer='', comments ='')
 
 	# Open new file each hour
 	if sync_param['close_file'] == 1:
